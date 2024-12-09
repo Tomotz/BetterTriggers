@@ -14,7 +14,8 @@
         Closing="Window_Closing"
         SizeChanged="Window_SizeChanged"
         LocationChanged="Window_LocationChanged"
-        StateChanged="Window_StateChanged" >
+        StateChanged="Window_StateChanged"
+        Loaded="Window_Loaded">
         
 
     <Window.Resources>

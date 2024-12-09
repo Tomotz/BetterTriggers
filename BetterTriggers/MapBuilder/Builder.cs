@@ -14,6 +14,9 @@ using War3Net.IO.Mpq;
 using JassObfuscator;
 using War3Net.IO.Compression;
 using BetterTriggers.WorldEdit.GameDataReader;
+using System.Windows;
+using System.Text.RegularExpressions;
+using System.Collections;
 
 namespace BetterTriggers.TestMap
 {
@@ -64,9 +67,10 @@ namespace BetterTriggers.TestMap
         /// Builds an MPQ archive.
         /// Throws <see cref="Exception"/> and <see cref="ContainsBTDataException"/> on errors.
         /// </summary>
-        public BuildMapStatus BuildMap(string destinationDir = null, bool includeMPQSettings = false, bool isTest = false)
+        public BuildMapStatus BuildMap(string destinationDir = null, bool includeMPQSettings = false, bool isTest = false, string mapName = "")
         {
             EditorSettings settings = EditorSettings.Load();
+
             (bool wasVerified, string script) = GenerateScript();
             if (!wasVerified)
             {
@@ -87,13 +91,14 @@ namespace BetterTriggers.TestMap
             var map = Map.Open(mapDir);
             map.Info.ScriptLanguage = _language;
             map.Script = script;
+            if (mapName != "")
+                map.TriggerStrings.Strings[0].Value = mapName;
 
             if (settings.Export_IncludeTriggerData && isTest == false)
             {
                 var bt2we = new BT2WE(map);
                 bt2we.Convert();
             }
-
 
             // We need to add all arbitrary files into to the builder.
             MapBuilder builder = new MapBuilder(map);

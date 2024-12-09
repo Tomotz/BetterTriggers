@@ -5,7 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
-        Title="New Project" Height="350" Width="545" Background="{DynamicResource BackgroundMenu}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" KeyDown="Window_KeyDown">
+        Title="New Project" Height="350" Width="545" Background="{DynamicResource BackgroundMenu}" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" KeyDown="Window_KeyDown"
+        Loaded="NewProjLoaded">
 
     <Window.Resources>
         <Style x:Key="FocusVisual">

@@ -42,6 +42,10 @@ namespace GUI.Components.NewProject
             Grid.SetColumnSpan(control, 2);
         }
 
+        private void NewProjLoaded(object sender, RoutedEventArgs e)
+        {
+            btnConvert_Click(sender, e); // opens 'Copy Triggers From Map`
+        }
 
         private void btnConvert_Click(object sender, RoutedEventArgs e)
         {

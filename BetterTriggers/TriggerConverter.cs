@@ -103,7 +103,7 @@ namespace BetterTriggers.WorldEdit
                 for (int i = 0; i < triggers.TriggerItems.Count; i++)
                 {
                     var triggerItem = triggers.TriggerItems[i];
-                    if (triggerItem.Type != TriggerItemType.Gui)
+                    if (triggerItem.Type != TriggerItemType.Gui || triggerItem.Name == null)
                         continue;
 
                     string name = "gg_trg_" + triggerItem.Name.TrimEnd().Replace(" ", "_");
