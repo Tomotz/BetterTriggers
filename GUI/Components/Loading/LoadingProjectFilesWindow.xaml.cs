@@ -3,6 +3,7 @@ using BetterTriggers.Models.SaveableData;
 using BetterTriggers.WorldEdit;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 
 namespace GUI.Components.Loading

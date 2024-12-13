@@ -217,6 +217,24 @@ namespace BetterTriggers.Containers
             }
         }
 
+        private static void copy_lua_files(string project_src)
+        {
+            string dst_dir = System.IO.Path.Combine(project_src, "Triggers");
+            //Project.CurrentProject.projectFiles.Add()
+            string src_dir = "D:\\Tom\\scripts\\DawnOfTheDead\\lua";
+            var files = Directory.GetFiles(src_dir);
+
+            foreach (string filePath in files)
+            {
+                string fileName = System.IO.Path.GetFileName(filePath);
+                if (fileName == "Blizzard.1.33.v2.lua" || fileName == "common.1.33.v2.lua" || fileName == "HiddenNatives.1.33.v2.lua")
+                {
+                    continue;
+                }
+                string destinationPath = System.IO.Path.Combine(dst_dir, fileName);
+                File.Copy(filePath, destinationPath, overwrite: true);
+            }
+        }
 
 
         public static event Action<int, int> FileLoadEvent;
@@ -258,6 +276,11 @@ namespace BetterTriggers.Containers
             project.src = Path.Combine(Path.GetDirectoryName(projectPath), "src");
             project.dist = Path.Combine(Path.GetDirectoryName(projectPath), "dist");
             project.war3project = war3project;
+
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length >= 2 && args.Length < 6)
+                copy_lua_files(project.src);
+
             project.projectFiles = new();
             project.projectFiles.Add(new ExplorerElement(project.src, ExplorerElementEnum.Root));
             project.currentSelectedElement = project.src; // defaults to here when nothing has been selected yet.

@@ -636,32 +636,12 @@ namespace GUI
             return triggerExplorer != null;
         }
 
-        private void copy_lua_files()
-        {
-            string dst_dir = System.IO.Path.Combine(Project.CurrentProject.src, "Triggers");
-            //Project.CurrentProject.projectFiles.Add()
-            string src_dir = "D:\\Tom\\scripts\\DawnOfTheDead\\lua";
-            var files = Directory.GetFiles(src_dir);
-
-            foreach (string filePath in files)
-            {
-                string fileName = System.IO.Path.GetFileName(filePath);
-                if (fileName == "Blizzard.1.33.v2.lua" || fileName == "common.1.33.v2.lua" || fileName == "HiddenNatives.1.33.v2.lua")
-                {
-                    continue;
-                }
-                string destinationPath = System.IO.Path.Combine(dst_dir, fileName);
-                File.Copy(filePath, destinationPath, overwrite: true);
-            }
-        }
 
         private void MyBuildMap()
         {
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length >= 6 || args.Length <= 1) // non cli run or too many args. ignoring
                 return;
-            if (args.Length >= 2)
-                copy_lua_files();
             string CopyLocation;
             string src = System.IO.Path.GetDirectoryName(Project.CurrentProject.src);
 
