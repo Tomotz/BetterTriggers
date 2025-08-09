@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "GUI": {
+      "commandName": "Project",
+      "commandLineArgs": "\"D:\\\\Users\\\\Tom\\\\Documents\\\\Warcraft III\\\\Maps\\\\dotd\\\\Unofficial 7.00 006 alpha.w3x\" mappynammy1 \"D:\\\\Users\\\\Tom\\\\Documents\\\\Warcraft III\\\\Maps\\\\dotd\""
+    }
+  }
+}

@@ -75,6 +75,19 @@ namespace GUI.Components.NewProject
             {
                 lblError.Visibility = Visibility.Visible;
                 lblError.Content = "Project directory already exists";
+                if (FinalPath.Contains("BetterTriggers")) { // Don't want to exidently remove c:\ or something
+                    //MessageBoxResult result = System.Windows.MessageBox.Show(
+                    //    "Project directory already exists " + FinalPath + ". delete it?",              // Message text
+                    //    "Confirmation",                         // Title of the message box
+                    //    MessageBoxButton.YesNoCancel         // Buttons to display (Yes, No, Cancel)
+                    //);
+                    //if (result == MessageBoxResult.Yes)
+                    //{
+                        lblError.Visibility = Visibility.Hidden;
+                        FinalPathAlreadyExists = false;
+                        Directory.Delete(FinalPath, true);
+                    //}
+                }
             }
             else
                 lblError.Visibility = Visibility.Hidden;
@@ -84,6 +97,47 @@ namespace GUI.Components.NewProject
             btnConvert.IsEnabled = ok;
 
             return ok;
+        }
+
+        private void Worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            // Same logic as btnOpen_Click
+            OnOpenProject?.Invoke();
+        }
+
+        private void ConvertLoaded(object sender, RoutedEventArgs e)
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length <= 1)
+                return;
+
+            if (args.Length >= 6)
+            {
+                MessageBox.Show("Too many command line args. Ignoring all." + Environment.NewLine +"usage: Better Triggers.exe <in map file path> <out map name> <outpath> <project directory>"+ Environment.NewLine + string.Join(Environment.NewLine, Environment.GetCommandLineArgs()));
+                return;
+            }
+
+            string in_map_file_path = args[1];
+            lblMap.Text = in_map_file_path;
+            if (args.Length >= 5)
+                lblDestination.Text = args[4];
+            else
+                lblDestination.Text = "D:\\Users\\Tom\\Documents\\Warcraft III\\Maps\\dotd\\BetterTriggers";
+
+
+            // The code from btnConvert_Click
+            if (!VerifyPaths())
+                return;
+
+            mapPath = lblMap.Text;
+            btnCancel.IsEnabled = false;
+            btnConvert.Visibility = Visibility.Hidden;
+            progressBar.Visibility = Visibility.Visible;
+            lblConverting.Visibility = Visibility.Visible;
+            worker.RunWorkerAsync();
+
+            worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+
         }
 
         private void btnConvert_Click(object sender, RoutedEventArgs e)
@@ -97,6 +151,7 @@ namespace GUI.Components.NewProject
             progressBar.Visibility = Visibility.Visible;
             lblConverting.Visibility = Visibility.Visible;
             worker.RunWorkerAsync();
+
         }
 
         private void WorkerVerify_ProgressChanged(object sender, ProgressChangedEventArgs e)

@@ -14,8 +14,9 @@
         Closing="Window_Closing"
         SizeChanged="Window_SizeChanged"
         LocationChanged="Window_LocationChanged"
-        StateChanged="Window_StateChanged" >
-        
+        StateChanged="Window_StateChanged"
+        Loaded="Window_Loaded">
+
 
     <Window.Resources>
 
@@ -37,11 +38,11 @@
         </Style>
 
         <ControlTemplate x:Key="MenuItemControlTemplate1" TargetType="{x:Type MenuItem}">
-            <Border x:Name="templateRoot" 
-                BorderBrush="#0000" 
-                CornerRadius="0" 
-                BorderThickness="1" 
-                Background="{TemplateBinding Background}" 
+            <Border x:Name="templateRoot"
+                BorderBrush="#0000"
+                CornerRadius="0"
+                BorderThickness="1"
+                Background="{TemplateBinding Background}"
                 SnapsToDevicePixels="True">
                 <Grid VerticalAlignment="Center">
                     <Grid.ColumnDefinitions>
@@ -181,7 +182,7 @@
         <RoutedUICommand x:Key="ValidateTriggers"></RoutedUICommand>
         <RoutedUICommand x:Key="TestMap"></RoutedUICommand>
         <RoutedUICommand x:Key="BuildMap"></RoutedUICommand>
-        
+
     </Window.Resources>
 
 
@@ -209,7 +210,7 @@
         <CommandBinding Command="{StaticResource ValidateTriggers}" CanExecute="CommandBinding_CanExecute_IsProjectActive" Executed="CommandBinding_Executed_ValidateTriggers" />
         <CommandBinding Command="{StaticResource TestMap}" CanExecute="CommandBinding_CanExecute_IsProjectActive" Executed="CommandBinding_Executed_TestMap"/>
         <CommandBinding Command="{StaticResource BuildMap}" CanExecute="CommandBinding_CanExecute_IsProjectActive" Executed="CommandBinding_Executed_BuildMap"/>
-        
+
     </Window.CommandBindings>
     <Window.InputBindings>
         <KeyBinding x:Name="keybindingNewProject" Command="{StaticResource NewProject}" Key="N" Modifiers="Ctrl"/>
@@ -232,7 +233,7 @@
         <KeyBinding x:Name="keybindingValidateTriggers" Command="{StaticResource ValidateTriggers}" Key="F10" Modifiers="Ctrl"/>
         <KeyBinding x:Name="keybindingTestMap" Command="{StaticResource TestMap}" Key="F9" Modifiers="Ctrl"/>
         <KeyBinding x:Name="keybindingBuildMap" Command="{StaticResource BuildMap}" Key="B" Modifiers="Ctrl"/>
-        
+
     </Window.InputBindings>
 
     <Grid x:Name="mainGrid">
@@ -464,7 +465,7 @@
                 </ContextMenu>
             </TabControl.ContextMenu>
 
-            
+
             <TabControl.Template>
                 <ControlTemplate TargetType="TabControl">
                     <Grid>
@@ -474,7 +475,7 @@
                         </Grid.RowDefinitions>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"  VerticalScrollBarVisibility="Hidden" >
                             <TabPanel x:Name="HeaderPanel"
-                          Panel.ZIndex ="1" 
+                          Panel.ZIndex ="1"
                           KeyboardNavigation.TabIndex="1"
                           Grid.Column="0"
                           Grid.Row="0"

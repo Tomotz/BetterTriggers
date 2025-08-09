@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:GUI"
         mc:Ignorable="d"
         TextOptions.TextFormattingMode="Display"
+        Loaded="ConvertLoaded"
         
         Background="{DynamicResource BackgroundDark}">
     <Grid>

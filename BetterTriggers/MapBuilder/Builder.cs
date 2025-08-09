@@ -14,6 +14,10 @@ using War3Net.IO.Mpq;
 using JassObfuscator;
 using War3Net.IO.Compression;
 using BetterTriggers.WorldEdit.GameDataReader;
+using System.Windows;
+using System.Text.RegularExpressions;
+using System.Collections;
+using ICSharpCode.Decompiler.Metadata;
 using BetterTriggers.WorldEdit;
 
 namespace BetterTriggers.TestMap
@@ -60,12 +64,92 @@ namespace BetterTriggers.TestMap
             return (success, scriptGenerator.GeneratedScript);
         }
 
+        //private string remove_comments(string luaScript)
+        //{
+        //    // Split the script into individual lines
+        //    string[] lines = luaScript.Split('\n');
+        //    string[] outLines = [];
+        //    bool is_in_multiline_comment = false;
+        //    bool is_in_multiline_string = false;
+        //    for (int i = 0; i < lines.Length; i++)
+        //    {
+        //        string line = lines[i];
+        //        if (is_in_multiline_comment || is_in_multiline_string)
+        //        {
+        //            int index = line.IndexOf("]]");
+        //            if (index == -1)
+        //            {
+        //                outLines.Append("");
+        //                continue;
+        //            }
+        //            if (is_in_multiline_comment)
+        //            {
+
+        //                line = line.Substring(index + 2);
+        //            }
+        //            is_in_multiline_comment = false;
+        //            is_in_multiline_string = false;
+        //        }
+        //        int commentIdx = line.IndexOf("--");
+        //        int multStrIdx = line.IndexOf("[[");
+        //        if (commentIdx == -1 && multStrIdx == -1)
+        //        {
+        //            // No comments in the line. Just append it
+        //            outLines.Append(line);
+        //            continue;
+        //        }
+        //        string lineStart = multStrIdx == -1 && "" || line.Substring(0, multStrIdx);
+        //        string StringlessLine
+
+        //        // Skip lines containing " or '. We miss lines with strings and comments, but I don't care enough to fix this
+        //        if (line.Contains("\"") || line.Contains("'"))
+        //        {
+        //            outLines.Append(line);
+        //            continue;
+        //        }
+
+        //        // Remove single-line comments
+        //        line = Regex.Replace(line, @"--[^\r\n]*", string.Empty);
+
+        //        // Update the line back into the array
+        //        lines[i] = line;
+        //    }
+
+        //    // Rejoin the lines into a single string
+        //    return string.Join("\n", lines);
+        //}
+            //// Regular expression to match Lua single-line comments starting with --
+            //string pattern = @"--[^\r\n]*";
+
+            //// Replace comments with empty space, preserving line breaks
+            //return Regex.Replace(orig, pattern, string.Empty, RegexOptions.Multiline);
+
+            //// Pattern for Lua multiline comments: --[[ ... ]]
+            //string multilinePattern = @"--\[\[(.*?)\]\]";
+
+            //// Pattern for Lua single-line comments: --
+            //string singleLinePattern = @"--[^\r\n]*";
+
+            //// Remove multiline comments while preserving line breaks
+            //luaScript = Regex.Replace(luaScript, multilinePattern, match =>
+            //{
+            //    // Preserve new lines within multiline comments
+            //    string comment = match.Groups[1].Value;
+            //    return new string('\n', comment.Split('\n').Length - 1);
+            //}, RegexOptions.Singleline);
+
+            //// Remove single-line comments
+            //luaScript = Regex.Replace(luaScript, singleLinePattern, string.Empty, RegexOptions.Multiline);
+
+        //    return luaScript;
+        //}
+
         public string archivePath;
         /// <summary>
         /// Builds an MPQ archive.
         /// Throws <see cref="Exception"/> and <see cref="ContainsBTDataException"/> on errors.
         /// </summary>
-        public BuildMapStatus BuildMap(string destinationDir = null, bool includeMPQSettings = false, bool isTest = false)
+        public BuildMapStatus BuildMap(string destinationDir = null, bool includeMPQSettings = false, bool isTest = false, string mapName = "")
         {
             EditorSettings settings = EditorSettings.Load();
             (bool wasVerified, string script) = GenerateScript();
@@ -74,13 +158,19 @@ namespace BetterTriggers.TestMap
                 return new BuildMapStatus(BuildMapStatusCode.ScriptError, "Could not compile script.");
             }
 
-            if (includeMPQSettings && isTest == false)
+            if (includeMPQSettings)
             {
-                if (settings.Export_Obfuscate && _language == ScriptLanguage.Jass)
+                if (settings.Export_Obfuscate)
                 {
-                    string commonJ = ScriptGenerator.PathCommonJ;
-                    string blizzardJ = ScriptGenerator.PathBlizzardJ;
-                    script = Obfuscator.Obfuscate(script, commonJ, blizzardJ);
+                    if (_language == ScriptLanguage.Jass)
+                    {
+                        string commonJ = ScriptGenerator.PathCommonJ;
+                        string blizzardJ = ScriptGenerator.PathBlizzardJ;
+                        script = Obfuscator.Obfuscate(script, commonJ, blizzardJ);
+                    } else
+                    {
+                        //script = remove_comments(script);
+                    }
                 }
             }
 
@@ -104,6 +194,8 @@ namespace BetterTriggers.TestMap
 
             map.Info.ScriptLanguage = _language;
             map.Script = script;
+            if (mapName != "")
+                map.TriggerStrings.Strings[0].Value = mapName;
 
             if (settings.Export_IncludeTriggerData && isTest == false)
             {

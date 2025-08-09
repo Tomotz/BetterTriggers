@@ -7,6 +7,8 @@ using BetterTriggers.TestMap;
 using BetterTriggers.Utility;
 using BetterTriggers.WorldEdit;
 using BetterTriggers.WorldEdit.GameDataReader;
+using Cake.Core.IO;
+using Cake.Core.Scripting;
 using GUI.Components;
 using GUI.Components.About;
 using GUI.Components.BlizzardScripts;
@@ -28,6 +30,7 @@ using GUI.Components.VariableList;
 using GUI.Components.VerifyTriggers;
 using GUI.Components.VersionCheck;
 using Microsoft.Win32;
+using NuGet.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -39,6 +42,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using War3Net.Build;
 using War3Net.Build.Info;
 using GUI.Extensions;
 
@@ -633,6 +637,76 @@ namespace GUI
             return triggerExplorer != null;
         }
 
+
+        private void MyBuildMap()
+        {
+            string[] args = Environment.GetCommandLineArgs();
+            if (args.Length >= 6 || args.Length <= 1) // non cli run or too many args. ignoring
+                return;
+            string CopyLocation;
+            string src = System.IO.Path.GetDirectoryName(Project.CurrentProject.src);
+
+            string map_name;
+            string outpath;
+            if (args.Length >= 3)
+                map_name = args[2];
+            else
+                map_name = System.IO.Path.GetFileNameWithoutExtension(Project.CurrentProject.GetFullMapPath());
+            if (args.Length >= 4)
+                outpath = args[3];
+            else
+                outpath = System.IO.Path.Combine(src, "dist");
+            string map_name_colored = "|c00750508" + map_name + "|r";
+            CopyLocation = System.IO.Path.Combine(outpath, map_name + "_unprotected");
+            MyBuildMapSingle(CopyLocation, false, map_name_colored + " unprotected");
+
+            CopyLocation = System.IO.Path.Combine(outpath, map_name);
+            MyBuildMapSingle(CopyLocation, true, map_name_colored);
+        }
+
+        private void MyBuildMapSingle(string outpath, bool is_protected, string mapName)
+        {
+            //if (System.IO.File.Exists(outpath + ".w3x"))
+            //{
+            //    MessageBoxResult result = System.Windows.MessageBox.Show(
+            //        "I'm about to delete " + outpath + ". continue?",              // Message text
+            //        "Confirmation",                         // Title of the message box
+            //        MessageBoxButton.YesNoCancel         // Buttons to display (Yes, No, Cancel)
+            //    );
+            //    if (result == MessageBoxResult.No)
+            //    {
+            //        return;
+            //    }
+            //}
+
+            var settings = EditorSettings.Load();
+            settings.Export_IncludeTriggerData = !is_protected;
+            settings.Export_Compress = is_protected;
+            settings.Export_Compress_Advanced = false;
+            settings.Export_Compress_BlockSize = 3;
+            settings.Export_RemoveListfile = is_protected;
+            settings.Export_RemoveTriggerData = is_protected;
+            settings.Export_Obfuscate = is_protected;
+            settings.CopyLocation = outpath;
+
+            Builder builder = new();
+            try
+            {
+                var status = builder.BuildMap(includeMPQSettings: true, destinationDir: "", mapName: mapName);
+                if (status.Status == BuildMapStatusCode.ScriptError)
+                {
+                    throw new Exception(status.Message);
+                }
+            }
+            catch (Exception ex)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    //_error = ex;
+                });
+            }
+        }
+
         private void OpenProject(string file)
         {
             War3Project project = null;
@@ -680,6 +754,7 @@ namespace GUI
 
             VerifyTriggerData();
             OpenLastOpenedTabs();
+            MyBuildMap();
         }
 
         private void CurrentProject_OnFileExtensionChanged(string oldExt, string newExt)
@@ -749,7 +824,7 @@ namespace GUI
                 Components.Dialogs.MessageBox dialog = new Components.Dialogs.MessageBox("Error", status.Message);
                 dialog.ShowDialog();
             }
-            else if(status.Status == BuildMapStatusCode.ScriptError && Info.GetLanguage() == ScriptLanguage.Lua)
+            else if (status.Status == BuildMapStatusCode.ScriptError && Info.GetLanguage() == ScriptLanguage.Lua)
             {
                 Components.Dialogs.MessageBox dialog = new Components.Dialogs.MessageBox("Error", status.Message);
                 dialog.ShowDialog();
@@ -832,16 +907,6 @@ namespace GUI
                 globalValidateTriggers.Dispose();
 
             e.Cancel = !doClose;
-
-            if(doClose && _downloadUpdateOnClose)
-            {
-                VersionCheck.DownloadUpdate();
-            }
-
-            if(doClose)
-            {
-                VersionCheck.WantToDownload -= DownloadUpdate;
-            }
         }
 
         private bool DoCloseProject()
@@ -1091,6 +1156,11 @@ namespace GUI
         {
             EditorSettings settings = EditorSettings.Load();
             settings.mainWindowFullscreen = this.WindowState.HasFlag(WindowState.Maximized);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            NewProject();
         }
 
         private void GridSplitter_DragCompleted(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
