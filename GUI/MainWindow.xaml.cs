@@ -45,6 +45,7 @@ using System.Windows.Media;
 using War3Net.Build;
 using War3Net.Build.Info;
 using GUI.Extensions;
+using System.Threading;
 
 namespace GUI
 {
@@ -640,8 +641,9 @@ namespace GUI
 
         private void MyBuildMap()
         {
+            // Arguments: base_map, out_map_name, out_folder, 
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Length >= 6 || args.Length <= 1) // non cli run or too many args. ignoring
+            if (args.Length <= 1 || args[1] == "--help" || args[1] == "-h") // non cli run. ignoring
                 return;
             string CopyLocation;
             string src = System.IO.Path.GetDirectoryName(Project.CurrentProject.src);
@@ -657,11 +659,19 @@ namespace GUI
             else
                 outpath = System.IO.Path.Combine(src, "dist");
             string map_name_colored = "|c00750508" + map_name + "|r";
-            CopyLocation = System.IO.Path.Combine(outpath, map_name + "_unprotected");
-            MyBuildMapSingle(CopyLocation, false, map_name_colored + " unprotected");
+            bool is_protected = true;
+            if (args.Length >= 5)
+                is_protected = args[4] == "y";
+            if (is_protected) {
+                CopyLocation = System.IO.Path.Combine(outpath, map_name);
+                MyBuildMapSingle(CopyLocation, true, map_name_colored);
+            } else {
+                CopyLocation = System.IO.Path.Combine(outpath, map_name + "_unprotected");
+                MyBuildMapSingle(CopyLocation, false, map_name_colored + " unprotected");
+            }
 
-            CopyLocation = System.IO.Path.Combine(outpath, map_name);
-            MyBuildMapSingle(CopyLocation, true, map_name_colored);
+            Thread.Sleep(3);
+            System.Environment.Exit(0);
         }
 
         private void MyBuildMapSingle(string outpath, bool is_protected, string mapName)

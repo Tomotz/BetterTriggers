@@ -296,7 +296,7 @@ namespace BetterTriggers.Containers
             project.war3project = war3project;
 
             string[] args = Environment.GetCommandLineArgs();
-            if (args.Length >= 2 && args.Length < 6)
+            if (args.Length >= 2 && args[1] != "--help" && args[1] != "-h")
                 copy_lua_files(project.src);
 
             project.projectFiles = new();

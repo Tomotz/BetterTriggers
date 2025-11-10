@@ -111,18 +111,24 @@ namespace GUI.Components.NewProject
             if (args.Length <= 1)
                 return;
 
-            if (args.Length >= 6)
+            string usage = "usage: Better Triggers.exe <in map file path> <out map name> <outpath> [<enabla_map_protection [y/n]>] [<project directory>]. enabla_map_protection is yes by default";
+            if (args[1] == "--help" || args[1] == "-h")
             {
-                MessageBox.Show("Too many command line args. Ignoring all." + Environment.NewLine +"usage: Better Triggers.exe <in map file path> <out map name> <outpath> <project directory>"+ Environment.NewLine + string.Join(Environment.NewLine, Environment.GetCommandLineArgs()));
+                MessageBox.Show(usage);
                 return;
+            }
+            if (args.Length >= 7)
+            {
+                MessageBox.Show("Too many command line args." + Environment.NewLine + usage
+                    + Environment.NewLine + "args given:" + string.Join(Environment.NewLine, Environment.GetCommandLineArgs()));
             }
 
             string in_map_file_path = args[1];
             lblMap.Text = in_map_file_path;
-            if (args.Length >= 5)
-                lblDestination.Text = args[4];
+            if (args.Length >= 6)
+                lblDestination.Text = args[5];
             else
-                lblDestination.Text = "D:\\Users\\Tom\\Documents\\Warcraft III\\Maps\\dotd\\BetterTriggers";
+                lblDestination.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Warcraft III\\BetterTriggers";
 
 
             // The code from btnConvert_Click
