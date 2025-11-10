@@ -236,13 +236,12 @@ namespace BetterTriggers.Containers
         //    }
         //}
 
-        private static void copy_lua_files(string project_src)
+        private static void copy_lua_files(string project_src, string lua_src)
         {
             string dst_dir = System.IO.Path.Combine(project_src, "Triggers");
             //Project.CurrentProject.projectFiles.Add()
-            string src_dir = "D:\\Tom\\scripts\\DawnOfTheDead\\lua";
 
-            foreach (string filePath in System.IO.Directory.EnumerateFiles(src_dir, "*.*", System.IO.SearchOption.AllDirectories))
+            foreach (string filePath in System.IO.Directory.EnumerateFiles(lua_src, "*.*", System.IO.SearchOption.AllDirectories))
             {
                 string fileName = System.IO.Path.GetFileName(filePath);
                 if (filePath.Contains("\\Natives\\"))
@@ -296,8 +295,13 @@ namespace BetterTriggers.Containers
             project.war3project = war3project;
 
             string[] args = Environment.GetCommandLineArgs();
+            string lua_src = "D:\\Tom\\scripts\\DawnOfTheDead\\lua";
             if (args.Length >= 2 && args[1] != "--help" && args[1] != "-h")
-                copy_lua_files(project.src);
+            {
+                if (args.Length >= 5)
+                    lua_src = args[4];
+                copy_lua_files(project.src, lua_src);
+            }
 
             project.projectFiles = new();
             project.projectFiles.Add(new ExplorerElement(project.src, ExplorerElementEnum.Root));

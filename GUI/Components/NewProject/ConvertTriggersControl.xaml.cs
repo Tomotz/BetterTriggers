@@ -111,13 +111,13 @@ namespace GUI.Components.NewProject
             if (args.Length <= 1)
                 return;
 
-            string usage = "usage: Better Triggers.exe <in map file path> <out map name> <outpath> [<enabla_map_protection [y/n]>] [<project directory>]. enabla_map_protection is yes by default";
+            string usage = "usage: Better Triggers.exe <in map file path> <out map name> <outpath> <in lua files path> [<enabla_map_protection [y/n]>] [<project directory>]. enabla_map_protection is yes by default";
             if (args[1] == "--help" || args[1] == "-h")
             {
                 MessageBox.Show(usage);
                 return;
             }
-            if (args.Length >= 7)
+            if (args.Length >= 8)
             {
                 MessageBox.Show("Too many command line args." + Environment.NewLine + usage
                     + Environment.NewLine + "args given:" + string.Join(Environment.NewLine, Environment.GetCommandLineArgs()));
@@ -125,8 +125,8 @@ namespace GUI.Components.NewProject
 
             string in_map_file_path = args[1];
             lblMap.Text = in_map_file_path;
-            if (args.Length >= 6)
-                lblDestination.Text = args[5];
+            if (args.Length >= 7)
+                lblDestination.Text = args[6];
             else
                 lblDestination.Text = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Warcraft III\\BetterTriggers";
 

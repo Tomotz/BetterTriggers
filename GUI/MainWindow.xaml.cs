@@ -660,8 +660,8 @@ namespace GUI
                 outpath = System.IO.Path.Combine(src, "dist");
             string map_name_colored = "|c00750508" + map_name + "|r";
             bool is_protected = true;
-            if (args.Length >= 5)
-                is_protected = args[4] == "y";
+            if (args.Length >= 6)
+                is_protected = args[5] == "y";
             if (is_protected) {
                 CopyLocation = System.IO.Path.Combine(outpath, map_name);
                 MyBuildMapSingle(CopyLocation, true, map_name_colored);
