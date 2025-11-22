@@ -183,7 +183,7 @@ namespace BetterTriggers.WorldEdit
             project.EnableFileEvents(true);
 
             CustomMapData.Load(mapPathProjectToImportInto);
-            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            UiDispatch.Invoke(() =>
             {
                 CustomMapData.ReloadMapData();
             });
