@@ -10,31 +10,6 @@ namespace BetterTriggers.CLI
     {
         static int Main(string[] args)
         {
-            // Initialize BetterTriggers core
-            // Load Warcraft III game data storage (CASC or MPQ)
-            var (isStorageValid, error) = WarcraftStorageReader.Load();
-            if (!isStorageValid)
-            {
-                Console.Error.WriteLine("Failed to load Warcraft III game data.");
-                if (!string.IsNullOrEmpty(error))
-                {
-                    Console.Error.WriteLine(error);
-                }
-                Console.Error.WriteLine();
-                Console.Error.WriteLine("Please open the Better Triggers GUI to configure the Warcraft III installation path in the settings, then try again.");
-                return 1;
-            }
-
-            // Initialize BetterTriggers data (trigger definitions, types, locale, etc.)
-            Init.Initialize(isTest: false);
-
-            // Also support legacy positional arguments for backward compatibility
-            // Format: BetterTriggers.CLI.exe <map_file> <map_name> <output_dir> <lua_dir> [y/n] [project_dir]
-            if (args.Length >= 4 && !args[0].StartsWith("-") && args[0] != "build")
-            {
-                return HandleLegacyArguments(args);
-            }
-
             var rootCommand = new RootCommand("BetterTriggers CLI - Build Warcraft III maps from trigger projects");
 
             var mapFileArg = new Argument<string>(
@@ -53,11 +28,10 @@ namespace BetterTriggers.CLI
                 name: "lua-dir",
                 description: "Directory containing Lua source files to include");
 
-            var protectedOpt = new Option<bool>(
-                name: "--protected",
-                description: "Enable map protection (obfuscation, compression)",
-                getDefaultValue: () => true);
-            protectedOpt.AddAlias("-p");
+            var noProtectedOpt = new Option<bool>(
+                name: "--no-protected",
+                description: "Disable map protection (obfuscation, compression). By default, maps are protected.",
+                getDefaultValue: () => false);
 
             var projectDirOpt = new Option<string?>(
                 name: "--project-dir",
@@ -65,54 +39,44 @@ namespace BetterTriggers.CLI
                 getDefaultValue: () => null);
             projectDirOpt.AddAlias("-d");
 
-            var buildCommand = new Command("build", "Build a map from a .w3x file")
-            {
-                mapFileArg,
-                mapNameArg,
-                outputDirArg,
-                luaDirArg,
-                protectedOpt,
-                projectDirOpt
-            };
+            rootCommand.AddArgument(mapFileArg);
+            rootCommand.AddArgument(mapNameArg);
+            rootCommand.AddArgument(outputDirArg);
+            rootCommand.AddArgument(luaDirArg);
+            rootCommand.AddOption(noProtectedOpt);
+            rootCommand.AddOption(projectDirOpt);
 
-            buildCommand.SetHandler(
-                (string mapFile, string mapName, string outputDir, string luaDir, bool isProtected, string? projectDir) =>
+            rootCommand.SetHandler(
+                (string mapFile, string mapName, string outputDir, string luaDir, bool noProtected, string? projectDir) =>
                 {
-                    int exitCode = BuildMap(mapFile, mapName, outputDir, luaDir, isProtected, projectDir);
+                    int exitCode = BuildMap(mapFile, mapName, outputDir, luaDir, !noProtected, projectDir);
                     Environment.Exit(exitCode);
                 },
-                mapFileArg, mapNameArg, outputDirArg, luaDirArg, protectedOpt, projectDirOpt);
-
-            rootCommand.AddCommand(buildCommand);
+                mapFileArg, mapNameArg, outputDirArg, luaDirArg, noProtectedOpt, projectDirOpt);
 
             return rootCommand.Invoke(args);
         }
 
-        private static int HandleLegacyArguments(string[] args)
-        {
-            // Legacy format: <map_file> <map_name> <output_dir> <lua_dir> [y/n] [project_dir]
-            string mapFile = args[0];
-            string mapName = args[1];
-            string outputDir = args[2];
-            string luaDir = args[3];
-            bool isProtected = true;
-            string? projectDir = null;
-
-            if (args.Length >= 5)
-            {
-                isProtected = args[4].ToLower() == "y";
-            }
-
-            if (args.Length >= 6)
-            {
-                projectDir = args[5];
-            }
-
-            return BuildMap(mapFile, mapName, outputDir, luaDir, isProtected, projectDir);
-        }
-
         private static int BuildMap(string mapFile, string mapName, string outputDir, string luaDir, bool isProtected, string? projectDir)
         {
+            // Initialize BetterTriggers core
+            // Load Warcraft III game data storage (CASC or MPQ)
+            var (isStorageValid, error) = WarcraftStorageReader.Load();
+            if (!isStorageValid)
+            {
+                Console.Error.WriteLine("Failed to load Warcraft III game data.");
+                if (!string.IsNullOrEmpty(error))
+                {
+                    Console.Error.WriteLine(error);
+                }
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("Please open the Better Triggers GUI to configure the Warcraft III installation path in the settings, then try again.");
+                return 1;
+            }
+
+            // Initialize BetterTriggers data (trigger definitions, types, locale, etc.)
+            Init.Initialize(isTest: false);
+
             Console.WriteLine("BetterTriggers CLI - Building map...");
             Console.WriteLine($"  Map file: {mapFile}");
             Console.WriteLine($"  Output name: {mapName}");
