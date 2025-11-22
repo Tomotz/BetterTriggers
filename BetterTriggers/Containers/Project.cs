@@ -471,7 +471,7 @@ namespace BetterTriggers.Containers
 
         public void OnRenameElement(string oldFullPath, string newFullPath)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            UiDispatch.Invoke(() =>
             {
                 var rootNode = projectFiles[0];
                 ExplorerElement elementToRename = FindExplorerElement(rootNode, oldFullPath);
@@ -501,7 +501,7 @@ namespace BetterTriggers.Containers
             var rootNode = projectFiles[0];
             ExplorerElement elementToRename = FindExplorerElement(rootNode, oldFullPath);
 
-            Application.Current.Dispatcher.Invoke(() =>
+            UiDispatch.Invoke(() =>
             {
                 CommandExplorerElementMove command = new CommandExplorerElementMove(elementToRename, newFullPath, insertIndex);
                 command.Execute();
@@ -550,7 +550,7 @@ namespace BetterTriggers.Containers
 
         public void OnDeleteElement(string fullPath)
         {
-            Application.Current.Dispatcher.Invoke(() =>
+            UiDispatch.Invoke(() =>
             {
                 var rootNode = projectFiles[0];
                 ExplorerElement elementToDelete = FindExplorerElement(rootNode, fullPath);
