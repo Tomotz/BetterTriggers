@@ -1,9 +1,7 @@
 using System;
 using System.CommandLine;
-using System.CommandLine.Invocation;
 using System.IO;
 using BetterTriggers;
-using BetterTriggers.MapBuilder;
 
 namespace BetterTriggers.CLI
 {
@@ -22,93 +20,64 @@ namespace BetterTriggers.CLI
                 return 1;
             }
 
-            var rootCommand = new RootCommand("BetterTriggers CLI - Build Warcraft III maps from trigger projects");
-
-            var buildCommand = new Command("build", "Build a map from a .w3x file")
-            {
-                CreateMapFileArgument(),
-                CreateMapNameArgument(),
-                CreateOutputDirArgument(),
-                CreateLuaDirArgument(),
-                CreateProtectedOption(),
-                CreateProjectDirOption()
-            };
-
-            buildCommand.SetHandler(BuildCommandHandler);
-
-            rootCommand.AddCommand(buildCommand);
-
             // Also support legacy positional arguments for backward compatibility
             // Format: BetterTriggers.CLI.exe <map_file> <map_name> <output_dir> <lua_dir> [y/n] [project_dir]
-            if (args.Length >= 4 && !args[0].StartsWith("-"))
+            if (args.Length >= 4 && !args[0].StartsWith("-") && args[0] != "build")
             {
                 return HandleLegacyArguments(args);
             }
 
-            return rootCommand.Invoke(args);
-        }
+            var rootCommand = new RootCommand("BetterTriggers CLI - Build Warcraft III maps from trigger projects");
 
-        private static Argument<string> CreateMapFileArgument()
-        {
-            var arg = new Argument<string>(
+            var mapFileArg = new Argument<string>(
                 name: "map-file",
                 description: "Path to the .w3x map file to build from");
-            arg.AddAlias("map");
-            return arg;
-        }
 
-        private static Argument<string> CreateMapNameArgument()
-        {
-            return new Argument<string>(
+            var mapNameArg = new Argument<string>(
                 name: "map-name",
                 description: "Name for the output map file (without extension)");
-        }
 
-        private static Argument<string> CreateOutputDirArgument()
-        {
-            return new Argument<string>(
+            var outputDirArg = new Argument<string>(
                 name: "output-dir",
                 description: "Directory where the built map will be saved");
-        }
 
-        private static Argument<string> CreateLuaDirArgument()
-        {
-            return new Argument<string>(
+            var luaDirArg = new Argument<string>(
                 name: "lua-dir",
                 description: "Directory containing Lua source files to include");
-        }
 
-        private static Option<bool> CreateProtectedOption()
-        {
-            var option = new Option<bool>(
+            var protectedOpt = new Option<bool>(
                 name: "--protected",
                 description: "Enable map protection (obfuscation, compression)",
                 getDefaultValue: () => true);
-            option.AddAlias("-p");
-            return option;
-        }
+            protectedOpt.AddAlias("-p");
 
-        private static Option<string?> CreateProjectDirOption()
-        {
-            var option = new Option<string?>(
+            var projectDirOpt = new Option<string?>(
                 name: "--project-dir",
                 description: "Base directory for the BetterTriggers project (defaults to Documents/Warcraft III/BetterTriggers)",
                 getDefaultValue: () => null);
-            option.AddAlias("-d");
-            return option;
-        }
+            projectDirOpt.AddAlias("-d");
 
-        private static void BuildCommandHandler(InvocationContext context)
-        {
-            string mapFile = context.ParseResult.GetValueForArgument(CreateMapFileArgument());
-            string mapName = context.ParseResult.GetValueForArgument(CreateMapNameArgument());
-            string outputDir = context.ParseResult.GetValueForArgument(CreateOutputDirArgument());
-            string luaDir = context.ParseResult.GetValueForArgument(CreateLuaDirArgument());
-            bool isProtected = context.ParseResult.GetValueForOption(CreateProtectedOption());
-            string? projectDir = context.ParseResult.GetValueForOption(CreateProjectDirOption());
+            var buildCommand = new Command("build", "Build a map from a .w3x file")
+            {
+                mapFileArg,
+                mapNameArg,
+                outputDirArg,
+                luaDirArg,
+                protectedOpt,
+                projectDirOpt
+            };
 
-            int exitCode = BuildMap(mapFile, mapName, outputDir, luaDir, isProtected, projectDir);
-            context.ExitCode = exitCode;
+            buildCommand.SetHandler(
+                (string mapFile, string mapName, string outputDir, string luaDir, bool isProtected, string? projectDir) =>
+                {
+                    int exitCode = BuildMap(mapFile, mapName, outputDir, luaDir, isProtected, projectDir);
+                    Environment.Exit(exitCode);
+                },
+                mapFileArg, mapNameArg, outputDirArg, luaDirArg, protectedOpt, projectDirOpt);
+
+            rootCommand.AddCommand(buildCommand);
+
+            return rootCommand.Invoke(args);
         }
 
         private static int HandleLegacyArguments(string[] args)

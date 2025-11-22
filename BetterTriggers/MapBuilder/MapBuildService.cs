@@ -1,9 +1,10 @@
 using BetterTriggers.Containers;
 using BetterTriggers.WorldEdit;
+using BetterTriggers.TestMap;
 using System;
 using System.IO;
 
-namespace BetterTriggers.MapBuilder
+namespace BetterTriggers
 {
     /// <summary>
     /// Shared service for building maps from BetterTriggers projects.
