@@ -2,6 +2,7 @@ using System;
 using System.CommandLine;
 using System.IO;
 using BetterTriggers;
+using BetterTriggers.WorldEdit.GameDataReader;
 
 namespace BetterTriggers.CLI
 {
@@ -12,6 +13,21 @@ namespace BetterTriggers.CLI
             // Initialize BetterTriggers core
             try
             {
+                // Load Warcraft III game data storage (CASC or MPQ)
+                var (isStorageValid, error) = WarcraftStorageReader.Load();
+                if (!isStorageValid)
+                {
+                    Console.Error.WriteLine("Failed to load Warcraft III game data.");
+                    if (!string.IsNullOrEmpty(error))
+                    {
+                        Console.Error.WriteLine(error);
+                    }
+                    Console.Error.WriteLine();
+                    Console.Error.WriteLine("Please open the Better Triggers GUI to configure the Warcraft III installation path in the settings, then try again.");
+                    return 1;
+                }
+
+                // Initialize BetterTriggers data (trigger definitions, types, locale, etc.)
                 Init.Initialize(isTest: false);
             }
             catch (Exception ex)
