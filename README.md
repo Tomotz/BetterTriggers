@@ -32,3 +32,5 @@ In Visual Studio, select all submodules, right-click and select 'Reload Project'
 ![alt text](image-1.png)
 
 You should now be set.
+
+<!-- Test comment for PR verification -->
