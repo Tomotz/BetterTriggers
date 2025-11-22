@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BetterTriggers", "BetterTri
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{54F00CB5-160E-401A-8644-E752393A09A2}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CLI", "CLI\CLI.csproj", "{C8F9A1B2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}"
+EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Publish", "Publish", "{858514CB-A111-449B-88D7-96633DAB50D5}"
 	ProjectSection(SolutionItems) = preProject
 		publish.bat = publish.bat
@@ -64,6 +66,10 @@ Global
 		{54F00CB5-160E-401A-8644-E752393A09A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{54F00CB5-160E-401A-8644-E752393A09A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{54F00CB5-160E-401A-8644-E752393A09A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8F9A1B2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8F9A1B2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8F9A1B2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8F9A1B2-3D4E-5F6A-7B8C-9D0E1F2A3B4C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1025E8EE-93F5-2C82-A578-468D0B3FED42}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1025E8EE-93F5-2C82-A578-468D0B3FED42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1025E8EE-93F5-2C82-A578-468D0B3FED42}.Release|Any CPU.ActiveCfg = Release|Any CPU
