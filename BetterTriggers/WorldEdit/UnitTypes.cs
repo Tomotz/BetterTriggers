@@ -321,6 +321,7 @@ namespace BetterTriggers.WorldEdit
             // Base units
             foreach (var baseUnit in customUnits.BaseUnits)
             {
+                Console.WriteLine("BaseUnit:", baseUnit.OldId, Int32Extensions.ToRawcode(baseUnit.OldId));
                 UnitType unit = GetUnitType(Int32Extensions.ToRawcode(baseUnit.OldId));
                 UnitName name = unit.Name.Clone();
                 string sort = unit.Sort;

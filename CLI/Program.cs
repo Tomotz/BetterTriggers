@@ -11,31 +11,22 @@ namespace BetterTriggers.CLI
         static int Main(string[] args)
         {
             // Initialize BetterTriggers core
-            try
+            // Load Warcraft III game data storage (CASC or MPQ)
+            var (isStorageValid, error) = WarcraftStorageReader.Load();
+            if (!isStorageValid)
             {
-                // Load Warcraft III game data storage (CASC or MPQ)
-                var (isStorageValid, error) = WarcraftStorageReader.Load();
-                if (!isStorageValid)
+                Console.Error.WriteLine("Failed to load Warcraft III game data.");
+                if (!string.IsNullOrEmpty(error))
                 {
-                    Console.Error.WriteLine("Failed to load Warcraft III game data.");
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        Console.Error.WriteLine(error);
-                    }
-                    Console.Error.WriteLine();
-                    Console.Error.WriteLine("Please open the Better Triggers GUI to configure the Warcraft III installation path in the settings, then try again.");
-                    return 1;
+                    Console.Error.WriteLine(error);
                 }
-
-                // Initialize BetterTriggers data (trigger definitions, types, locale, etc.)
-                Init.Initialize(isTest: false);
-            }
-            catch (Exception ex)
-            {
-                Console.Error.WriteLine("Failed to initialize BetterTriggers.");
-                Console.Error.WriteLine(ex.ToString());
+                Console.Error.WriteLine();
+                Console.Error.WriteLine("Please open the Better Triggers GUI to configure the Warcraft III installation path in the settings, then try again.");
                 return 1;
             }
+
+            // Initialize BetterTriggers data (trigger definitions, types, locale, etc.)
+            Init.Initialize(isTest: false);
 
             // Also support legacy positional arguments for backward compatibility
             // Format: BetterTriggers.CLI.exe <map_file> <map_name> <output_dir> <lua_dir> [y/n] [project_dir]
