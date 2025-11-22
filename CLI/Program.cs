@@ -16,7 +16,8 @@ namespace BetterTriggers.CLI
             }
             catch (Exception ex)
             {
-                Console.Error.WriteLine($"Failed to initialize BetterTriggers: {ex.Message}");
+                Console.Error.WriteLine("Failed to initialize BetterTriggers.");
+                Console.Error.WriteLine(ex.ToString());
                 return 1;
             }
 
